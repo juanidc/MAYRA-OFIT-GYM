@@ -1,0 +1,14 @@
+{
+  "name": "ofit-gym-socios",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "supabase:status": "node scripts/check-supabase.js",
+    "supabase:migrate-clientes": "node scripts/migrate-clientes-supabase.js",
+    "supabase:check-clientes": "node scripts/check-clientes-supabase.js",
+    "supabase:migrate-clases": "node scripts/migrate-clases-supabase.js",
+    "supabase:check-clases": "node scripts/check-clases-supabase.js",
+    "supabase:seed-horarios-ofit": "node scripts/seed-horarios-ofit-julio-2026.js"
+  }
+}

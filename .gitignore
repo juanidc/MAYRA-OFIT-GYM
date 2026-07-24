@@ -1,0 +1,8 @@
+.env
+*.log
+node_modules/
+
+# Base local con datos personales. En produccion usar DB real.
+data/db.json
+data/db.json.bak
+data/db.json.tmp

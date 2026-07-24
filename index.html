@@ -1,0 +1,148 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OFIT Gym | Sistema de socios</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="logged-out">
+  <section class="login-screen" id="loginScreen">
+    <form class="login-card" id="loginForm">
+      <div class="brand login-brand"><div class="brand-mark"><img src="assets/ofit-logo-blanco-cuadrado.png" alt="OFIT"></div><div><strong>OFIT Gym</strong><span>Ingreso al sistema</span></div></div>
+      <label class="field"><span>Usuario</span><input id="loginUser" autocomplete="username" placeholder="Tu usuario" minlength="2" maxlength="40" pattern="[A-Za-z0-9._-]+"></label>
+      <label class="field"><span>Contrasena</span><div class="password-field"><input id="loginPass" type="password" autocomplete="current-password" placeholder="Tu contrasena" required minlength="6" maxlength="80"><button class="eye-button" type="button" data-toggle-password="loginPass" aria-label="Ver contrasena">Ver</button></div></label>
+      <button class="primary-button wide" type="submit">Ingresar</button>
+      <button class="ghost-button wide" type="button" id="openSignupPage">Registrarse</button>
+      <p class="login-error" id="loginError"></p>
+      <div class="login-help"><span>Si ya tenes usuario, ingresa con tus datos.</span><span>Si sos nuevo, usa Registrarse para completar la ficha.</span></div>
+    </form>
+  </section>
+  <section class="registration-screen" id="registrationScreen">
+    <form class="registration-card" id="publicSignupForm">
+      <div class="registration-brand">
+        <img src="assets/ofit-logo-blanco.png" alt="OFIT Gym">
+        <div><p class="eyebrow">Nuevo socio</p><h1>Ficha de inscripcion</h1><span>Completa tus datos y crea tu usuario para entrar al sistema.</span></div>
+      </div>
+      <div class="form-grid two"><label class="field"><span>Nombre completo</span><input id="signupFullName" autocomplete="name" required minlength="2" maxlength="90"></label><label class="field"><span>DNI</span><input id="signupDni" inputmode="numeric" required minlength="6" maxlength="20" pattern="[0-9.\-]+"></label></div>
+      <div class="form-grid two"><label class="field"><span>Fecha de nacimiento</span><input id="signupBirthdate" type="date" required></label><label class="field"><span>Mail</span><input id="signupEmail" type="email" autocomplete="email" required></label></div>
+      <label class="field"><span>Patologia, enfermedad, dolor o algo actual vinculado a tu cuerpo</span><textarea id="signupBodyNote" rows="4" placeholder="Contanos brevemente si hay algo que debamos saber hoy" required maxlength="800"></textarea></label>
+      <div class="form-grid two"><label class="field"><span>Usuario</span><input id="signupUser" autocomplete="username" required minlength="2" maxlength="40" pattern="[A-Za-z0-9._-]+"></label><label class="field"><span>Contrasena</span><div class="password-field"><input id="signupPassword" type="password" autocomplete="new-password" required minlength="6" maxlength="80"><button class="eye-button" type="button" data-toggle-password="signupPassword" aria-label="Ver contrasena">Ver</button></div></label></div>
+      <label class="check-line"><input id="signupAccept" type="checkbox" required> <span>Confirmo que los datos son correctos y acepto ser contactado por OFIT Gym.</span></label>
+      <div class="signup-verification hidden" id="signupVerificationBox">
+        <div><strong>Verifica tu correo</strong><span>Te enviamos un codigo de 6 numeros. Ingresalo para terminar el registro.</span></div>
+        <label class="field"><span>Codigo recibido</span><input id="signupCode" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="000000"></label>
+        <button class="ghost-button" type="button" id="resendSignupCode">Reenviar codigo</button>
+      </div>
+      <div class="form-actions"><button class="ghost-button" type="button" id="backToLogin">Volver al ingreso</button><button class="primary-button" type="submit" id="signupSubmitButton">Enviar ficha</button></div>
+      <p class="login-error" id="signupError"></p>
+    </form>
+  </section>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><img src="assets/ofit-logo-blanco-cuadrado.png" alt="OFIT"></div>
+        <div><strong id="brandName">OFIT Gym</strong><span id="roleHint">Panel simple</span></div>
+      </div>
+      <nav class="nav-list" id="navList"></nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><p class="eyebrow" id="roleLabel">Administrador</p><h1 id="viewTitle">Inicio</h1></div>
+        <div class="top-actions" id="topActions">
+          <button class="ghost-button" type="button" data-open-modal="signup">QR de registro</button>
+          <button class="primary-button" type="button" id="newRoutineTop">Nueva clase</button>
+        </div>
+        <button class="ghost-button logout-button" type="button" id="logoutButton">Salir</button>
+      </header>
+
+      <section class="view active" id="dashboard"></section>
+      <section class="view" id="news"></section>
+      <section class="view" id="conexionPostural"></section>
+      <section class="view" id="members"></section>
+      <section class="view" id="memberDetail"></section>
+      <section class="view" id="routines"></section>
+      <section class="view" id="schedule"></section>
+      <section class="view" id="payments"></section>
+      <section class="view" id="accounting"></section>
+      <section class="view" id="routineDetail"></section>
+      <section class="view" id="workout"></section>
+      <section class="view" id="progress"></section>
+      <section class="view" id="profile"></section>
+    </main>
+  </div>
+
+  <dialog class="modal" id="signupModal">
+    <form method="dialog">
+      <div class="modal-heading"><h2>Registro de socios</h2><button class="icon-button" value="cancel" aria-label="Cerrar">x</button></div>
+      <div class="qr-area large"><div class="fake-qr"></div><div><strong>Link de inscripcion: /#registro</strong><span>El QR puede llevar a la ficha publica. Al registrarse, el socio queda cargado y puede entrar con su usuario.</span></div></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="memberModal">
+    <form id="memberForm" method="dialog">
+      <div class="modal-heading"><h2>Agregar socio</h2><button class="icon-button" value="cancel" aria-label="Cerrar">x</button></div>
+      <div class="form-grid two"><label class="field"><span>Nombre completo</span><input id="newMemberName" required minlength="2" maxlength="90"></label><label class="field"><span>Usuario</span><input id="newMemberUser" required minlength="2" maxlength="40" pattern="[A-Za-z0-9._-]+"></label></div>
+      <div class="form-grid two"><label class="field"><span>DNI</span><input id="newMemberDni" inputmode="numeric" maxlength="20" pattern="[0-9.\-]+"></label><label class="field"><span>Fecha de nacimiento</span><input id="newMemberBirthdate" type="date"></label></div>
+      <label class="field"><span>Mail</span><input id="newMemberEmail" type="email" maxlength="120"></label>
+      <label class="field"><span>Patologia, enfermedad, dolor o estado corporal actual</span><textarea id="newMemberBodyNote" maxlength="800" placeholder="Contanos brevemente si hay algo que debamos saber"></textarea></label>
+      <label class="field"><span>Contrasena del socio</span><div class="password-field"><input id="newMemberPassword" type="password" value="socio123" required minlength="6" maxlength="80"><button class="eye-button" type="button" data-toggle-password="newMemberPassword" aria-label="Ver contrasena">Ver</button></div></label>
+      <div class="form-grid two"><label class="field"><span>Tipo de abono</span><select id="newMemberType"><option value="eight-classes">8 clases</option><option value="free-pass">Pase libre</option></select></label><label class="field"><span>Cuota</span><select id="newMemberPayment"><option value="paid">Al dia</option><option value="due">Pendiente</option></select></label></div>
+      <label class="field"><span>Fecha de vencimiento</span><input id="newMemberDueDate" type="date"></label>
+      <button class="primary-button wide" type="submit">Guardar socio</button>
+    </form>
+  </dialog>
+
+  <dialog class="modal wide-modal" id="routineModal">
+    <form id="routineForm" method="dialog">
+      <div class="modal-heading"><h2 id="routineModalTitle">Nueva rutina</h2><button class="icon-button" value="cancel" aria-label="Cerrar">x</button></div>
+      <input type="hidden" id="editingRoutineId">
+      <div class="form-grid two"><label class="field"><span>Nombre</span><input id="routineName" required></label><label class="field"><span>Tipo</span><select id="routineType"><option value="General">General</option><option value="Plantilla">Plantilla</option><option value="Socio">Socio</option></select></label></div>
+      <label class="field"><span>Asignar a</span><select id="routineAssignedTo"><option value="all">Todos los socios</option></select></label>
+      <div class="builder-box">
+        <div class="form-grid four"><label class="field"><span>Ejercicio</span><select id="exerciseSelect"></select></label><label class="field"><span>Series</span><input id="exerciseSets" inputmode="numeric" value="3"></label><label class="field"><span>Reps</span><input id="exerciseReps" value="10"></label><label class="field"><span>Peso guia</span><input id="exerciseWeight" value=""></label></div>
+        <label class="field"><span>Descripcion corta</span><input id="exerciseNote" placeholder="Tecnica o indicacion breve"></label>
+        <button class="ghost-button" id="addExerciseButton" type="button">Agregar ejercicio</button>
+      </div>
+      <div class="builder-list" id="routineExerciseList"></div>
+      <button class="primary-button wide" type="submit">Guardar rutina</button>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="classModal">
+    <form id="classForm" method="dialog">
+      <div class="modal-heading"><h2 id="classModalTitle">Nueva clase</h2><button class="icon-button" value="cancel" aria-label="Cerrar">x</button></div>
+      <div class="form-grid two">
+        <label class="field"><span>Nombre de la clase</span><input id="classTitle" placeholder="Funcional noche" required minlength="2" maxlength="80"></label>
+        <label class="field"><span>Actividad</span><input id="classActivity" list="activityOptionsList" placeholder="Funcional o nueva actividad" required minlength="2" maxlength="80"><datalist id="activityOptionsList"></datalist></label>
+      </div>
+      <label class="field"><span>Profesor</span><input id="classCoach" placeholder="Nombre del profe" required maxlength="60"></label>
+      <div class="form-grid two">
+        <label class="field"><span>Dia</span><select id="classDay"><option>Lunes</option><option>Martes</option><option>Miercoles</option><option>Jueves</option><option>Viernes</option><option>Sabado</option><option>Domingo</option></select></label>
+        <label class="field"><span>Horario</span><input id="classTime" type="time" value="18:00" required></label>
+      </div>
+      <label class="field"><span>Descripcion corta</span><input id="classFocus" placeholder="Objetivo o enfoque de la clase" required maxlength="160"></label>
+      <button class="primary-button wide" type="submit">Guardar clase</button>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="assignModal">
+    <form id="assignForm" method="dialog">
+      <div class="modal-heading"><h2>Asignar rutina y actividades</h2><button class="icon-button" value="cancel" aria-label="Cerrar">x</button></div>
+      <input type="hidden" id="assignRoutineId">
+      <label class="field"><span>Socio</span><select id="assignMemberId"></select></label><div class="field"><span>Actividades</span><div class="activity-options" id="assignActivities"></div></div>
+      <button class="primary-button wide" type="submit">Asignar</button>
+    </form>
+  </dialog>
+
+  <dialog class="modal proof-modal" id="proofModal">
+    <form method="dialog">
+      <div class="modal-heading"><h2 id="proofModalTitle">Comprobante</h2><button class="icon-button" value="cancel" aria-label="Cerrar">x</button></div>
+      <img id="proofModalImage" alt="Comprobante de pago">
+    </form>
+  </dialog>
+
+  <script src="app.js?v=20260711-clases-supabase"></script>
+</body>
+</html>
