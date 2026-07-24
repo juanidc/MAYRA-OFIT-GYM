@@ -1211,16 +1211,6 @@ function resolveActivityId(db, value) {
 
 async function handleApi(req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`);
-  let db;
-  try {
-    db = await dbWithSupabaseMembers();
-  } catch (error) {
-    return send(res, 500, { error: "No se pudo conectar con la base de socios en Supabase." });
-  }
-
-  if (req.method === "GET" && url.pathname === "/api/public") {
-    return send(res, 200, publicDb(db));
-  }
 
   if (req.method === "GET" && url.pathname === "/api/supabase/status") {
     if (!supabaseConfigured()) {
@@ -1238,9 +1228,22 @@ async function handleApi(req, res) {
       return send(res, 200, {
         configured: true,
         ok: false,
-        error: error.message || "No se pudo conectar con Supabase."
+        statusCode: error.statusCode || null,
+        error: error.message || "No se pudo conectar con Supabase.",
+        details: error.data || null
       });
     }
+  }
+
+  let db;
+  try {
+    db = await dbWithSupabaseMembers();
+  } catch (error) {
+    return send(res, 500, { error: "No se pudo conectar con la base de socios en Supabase." });
+  }
+
+  if (req.method === "GET" && url.pathname === "/api/public") {
+    return send(res, 200, publicDb(db));
   }
 
   if (req.method === "GET" && url.pathname === "/api/session") {
