@@ -510,7 +510,7 @@ function cleanNews(item) {
     title: safeText(item.title, 90),
     category: safeText(item.category || "Horarios", 30),
     day: safeText(item.day || "Todos", 20),
-    image: image.startsWith("assets/") || /^data:image\/(png|jpe?g|gif|webp);base64,/i.test(image) ? safeText(image, 1600000) : safeUrl(image, ""),
+    image: image.startsWith("assets/") || /^data:image\/(png|jpe?g|gif|webp);base64,/i.test(image) ? safeText(image, 7000000) : safeUrl(image, ""),
     text: safeText(item.text, 240)
   };
 }
@@ -1738,7 +1738,7 @@ async function handleApi(req, res) {
       title,
       category: text(body.category || "Eventos", 30),
       day: text(body.day || "Todos", 20),
-      image: String(body.image || "").trim().slice(0, 1500000),
+      image: String(body.image || "").trim().slice(0, 7000000),
       text: text(body.text || "Nueva informacion para socios.", 240)
     };
     try {
