@@ -181,12 +181,22 @@ function defaultNews() {
 }
 
 function ensureDb() {
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
-  if (!fs.existsSync(dbPath)) writeDb(defaultDb());
+  try {
+    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
+    if (!fs.existsSync(dbPath)) writeDb(defaultDb());
+    return true;
+  } catch (error) {
+    if (process.env.NODE_ENV === "production") {
+      console.warn("No se pudo preparar data/db.json; se usara configuracion base en memoria:", error.message);
+      return false;
+    }
+    throw error;
+  }
 }
 
 function readDb() {
-  ensureDb();
+  const ready = ensureDb();
+  if (!ready) return defaultDb();
   try {
     const db = JSON.parse(fs.readFileSync(dbPath, "utf8"));
     if (ensureMemberNumbers(db)) writeDb(db);
@@ -202,18 +212,30 @@ function readDb() {
         return db;
       } catch {}
     }
+    if (process.env.NODE_ENV === "production") {
+      console.warn("data/db.json ilegible; se usara configuracion base en memoria:", error.message);
+      return defaultDb();
+    }
     throw new Error("data/db.json ilegible y sin backup valido: " + error.message);
   }
 }
 
 function writeDb(db) {
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
-  const serialized = JSON.stringify(db, null, 2);
-  const tmpPath = `${dbPath}.tmp`;
-  // Escribir en un temporal y renombrar: rename es atomico, nunca queda un db.json a medio escribir.
-  fs.writeFileSync(tmpPath, serialized);
-  if (fs.existsSync(dbPath)) { try { fs.copyFileSync(dbPath, `${dbPath}.bak`); } catch {} }
-  fs.renameSync(tmpPath, dbPath);
+  try {
+    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
+    const serialized = JSON.stringify(db, null, 2);
+    const tmpPath = `${dbPath}.tmp`;
+    // Escribir en un temporal y renombrar: rename es atomico, nunca queda un db.json a medio escribir.
+    fs.writeFileSync(tmpPath, serialized);
+    if (fs.existsSync(dbPath)) { try { fs.copyFileSync(dbPath, `${dbPath}.bak`); } catch {} }
+    fs.renameSync(tmpPath, dbPath);
+  } catch (error) {
+    if (process.env.NODE_ENV === "production") {
+      console.warn("No se pudo escribir data/db.json en produccion:", error.message);
+      return;
+    }
+    throw error;
+  }
 }
 
 function ensureMemberNumbers(db) {
