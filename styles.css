@@ -85,10 +85,19 @@ body{overflow-x:hidden}.login-screen{min-height:100vh;display:grid;place-items:c
 .settings-wide{grid-column:1/-1}.activity-admin-list{display:grid;gap:10px;margin-top:14px}.activity-admin-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px;border:1px solid rgba(141,53,201,.12);border-radius:8px;background:linear-gradient(135deg,#fff,#fbf8ff)}.activity-admin-row strong,.activity-admin-row small{display:block}.activity-admin-row small{margin-top:3px;color:var(--muted)}.activity-admin-row .danger-button{min-width:96px}
 .detail-actions-group{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
 .payment-method-panel{background:linear-gradient(135deg,#fff,#fbf7ff 58%,#eef8f2)}
+.payment-checkout{display:grid;gap:14px;margin-top:14px}
+.payment-plan-card{position:relative;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:112px;padding:18px;border-radius:12px;overflow:hidden;color:#fff;background:linear-gradient(135deg,#101112,#4d176d 56%,#17886f 130%);box-shadow:0 18px 42px rgba(31,18,38,.16)}
+.payment-plan-card.eight-classes{background:linear-gradient(135deg,#170b1d,#3a1a4c 58%,#7a3bd1 120%)}
+.payment-plan-card:after{content:"";position:absolute;inset:-46px -22px auto auto;width:180px;height:180px;border-radius:50%;background:rgba(212,154,255,.22)}
+.payment-plan-card span,.payment-plan-card small{display:block;color:rgba(255,255,255,.76);font-weight:800}
+.payment-plan-card strong{display:block;margin-top:4px;color:#fff;font-size:clamp(1.35rem,2.4vw,2rem)}
+.payment-price{position:relative;z-index:1;display:grid;place-items:center;min-width:132px;min-height:72px;padding:0 18px;border-radius:10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);font-size:1.75rem;font-weight:950;color:#fff}
 .pay-data-card{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+.payment-checkout .pay-data-card{margin-top:0}
 .pay-data-card>div{display:grid;gap:6px;padding:14px;border:1px solid rgba(141,53,201,.14);border-radius:8px;background:rgba(255,255,255,.84)}
+.payment-checkout .pay-data-card>div{background:#fff;border-color:rgba(141,53,201,.16);box-shadow:0 10px 24px rgba(31,18,38,.05)}
 .pay-data-card span{color:var(--muted);font-weight:800;font-size:.86rem}.pay-data-card strong{font-size:1.05rem;color:#17131c;overflow-wrap:anywhere}.small-button{min-height:32px;padding:0 10px;width:max-content}
-.payment-cta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.proof-upload-button{display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.proof-list{display:grid;gap:12px}.proof-card{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px;border:1px solid rgba(141,53,201,.14);border-radius:8px;background:linear-gradient(135deg,#fff,#fbf8ff);box-shadow:0 10px 24px rgba(31,18,38,.06)}
+.payment-cta-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}.pay-card-button{min-height:46px;padding:0 18px;border-radius:10px;box-shadow:0 14px 30px rgba(31,122,91,.22)}.proof-upload-button{display:inline-flex;align-items:center;justify-content:center;min-height:46px;border-radius:10px;background:#fff;cursor:pointer}.proof-list{display:grid;gap:12px}.proof-card{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px;border:1px solid rgba(141,53,201,.14);border-radius:8px;background:linear-gradient(135deg,#fff,#fbf8ff);box-shadow:0 10px 24px rgba(31,18,38,.06)}
 .proof-thumb{position:relative;width:92px;height:92px;border:0;padding:0;border-radius:8px;overflow:hidden;background:#f7f4fa;box-shadow:0 8px 20px rgba(31,18,38,.12)}
 .proof-thumb img{width:100%;height:100%;object-fit:cover;border:1px solid rgba(141,53,201,.16);border-radius:8px;background:#f7f4fa;transition:transform .18s ease}
 .proof-thumb span{position:absolute;left:6px;right:6px;bottom:6px;display:grid;place-items:center;min-height:24px;border-radius:6px;background:rgba(20,10,26,.78);color:#fff;font-size:.72rem;font-weight:900}
@@ -98,7 +107,7 @@ body{overflow-x:hidden}.login-screen{min-height:100vh;display:grid;place-items:c
 .proof-modal form{display:grid;gap:14px}
 .proof-modal img{display:block;width:100%;max-height:72vh;object-fit:contain;border-radius:8px;background:#120a18;border:1px solid rgba(141,53,201,.16)}
 @media (max-width:760px){.pay-now-button{width:100%;justify-self:stretch}.paid-pill{width:100%}.mini-class{grid-template-columns:58px minmax(0,1fr)}.reserve-mini{grid-column:1/-1;width:100%;min-width:0}.member-calendar .schedule-day{min-height:auto}}
-@media (max-width:760px){.pay-data-card{grid-template-columns:1fr}.payment-cta-row .primary-button,.payment-cta-row .ghost-button{width:100%}.proof-card{grid-template-columns:72px 1fr}.proof-thumb{width:72px;height:72px}.proof-card .payment-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr;gap:8px}.proof-modal img{max-height:68vh}}
+@media (max-width:760px){.payment-plan-card{align-items:flex-start;flex-direction:column}.payment-price{width:100%;justify-content:start}.pay-data-card{grid-template-columns:1fr}.payment-cta-row{display:grid}.payment-cta-row .primary-button,.payment-cta-row .ghost-button{width:100%}.proof-card{grid-template-columns:72px 1fr}.proof-thumb{width:72px;height:72px}.proof-card .payment-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr;gap:8px}.proof-modal img{max-height:68vh}}
 @media (max-width:760px){.upload-row{grid-template-columns:1fr}.upload-preview{min-height:180px}.upload-preview img{max-height:260px}}
 
 /* Correcciones de experiencia OFIT */
