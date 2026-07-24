@@ -816,6 +816,15 @@ async function updatePaymentProofInSupabase(item) {
   return comprobanteToPaymentProof(Array.isArray(rows) ? rows[0] : rows);
 }
 
+async function deletePaymentProofInSupabase(id) {
+  await supabaseRequest(`comprobantes_pago?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=minimal" },
+    body: { activo: false },
+    serviceRole: true
+  });
+}
+
 function dataImageToFile(image) {
   const match = String(image || "").trim().match(/^data:image\/(png|jpe?g|webp);base64,([a-z0-9+/=]+)$/i);
   if (!match) return null;
@@ -1697,6 +1706,26 @@ async function handleApi(req, res) {
       return send(res, 404, { error: "Imagen no encontrada en Storage." });
     }
     return;
+  }
+
+  const proofDeleteMatch = url.pathname.match(/^\/api\/payment-proofs\/(\d+)$/);
+  if (req.method === "DELETE" && proofDeleteMatch) {
+    const session = requireRole(req, res, ["admin"]);
+    if (!session || !requireCsrf(req, res, session)) return;
+    const proofId = Number(proofDeleteMatch[1]);
+    const proof = (db.paymentProofs || []).find(p => Number(p.id) === proofId);
+    if (!proof) return send(res, 404, { error: "Comprobante no encontrado." });
+    try {
+      await deletePaymentProofInSupabase(proofId);
+      db.paymentProofs = await loadPaymentProofs(db);
+    } catch (error) {
+      db.paymentProofs = (db.paymentProofs || []).filter(item => Number(item.id) !== proofId);
+      writeDb(db);
+    }
+    return send(res, 200, {
+      ok: true,
+      paymentProofs: db.paymentProofs.map(p => cleanPaymentProof(p, true))
+    });
   }
 
   const proofApproveMatch = url.pathname.match(/^\/api\/payment-proofs\/(\d+)\/approve$/);
