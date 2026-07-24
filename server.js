@@ -1223,7 +1223,20 @@ async function handleApi(req, res) {
 
     try {
       await testSupabaseConnection();
-      return send(res, 200, { configured: true, ok: true });
+      try {
+        await supabaseRequest("clientes?select=id&limit=1", { serviceRole: true });
+        return send(res, 200, { configured: true, ok: true, serviceRole: true });
+      } catch (serviceError) {
+        return send(res, 200, {
+          configured: true,
+          ok: false,
+          publicKey: true,
+          serviceRole: false,
+          statusCode: serviceError.statusCode || null,
+          error: serviceError.message || "No se pudo conectar con Supabase usando service role.",
+          details: serviceError.data || null
+        });
+      }
     } catch (error) {
       return send(res, 200, {
         configured: true,
