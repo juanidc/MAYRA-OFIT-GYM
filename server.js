@@ -1247,7 +1247,28 @@ async function handleApi(req, res) {
       await testSupabaseConnection();
       try {
         await supabaseRequest("clientes?select=id&limit=1", { serviceRole: true });
-        return send(res, 200, { configured: true, ok: true, serviceRole: true });
+        try {
+          const db = await dbWithSupabaseMembers();
+          return send(res, 200, {
+            configured: true,
+            ok: true,
+            serviceRole: true,
+            fullLoad: true,
+            members: Array.isArray(db.members) ? db.members.length : 0,
+            classes: Array.isArray(db.classes) ? db.classes.length : 0,
+            news: Array.isArray(db.news) ? db.news.length : 0,
+            paymentProofs: Array.isArray(db.paymentProofs) ? db.paymentProofs.length : 0
+          });
+        } catch (loadError) {
+          return send(res, 200, {
+            configured: true,
+            ok: false,
+            serviceRole: true,
+            fullLoad: false,
+            error: loadError.message || "No se pudo cargar la base completa.",
+            details: loadError.data || null
+          });
+        }
       } catch (serviceError) {
         return send(res, 200, {
           configured: true,
