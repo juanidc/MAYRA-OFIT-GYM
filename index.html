@@ -24,10 +24,10 @@
         <img src="assets/ofit-logo-blanco.png" alt="OFIT Gym">
         <div><p class="eyebrow">Nuevo socio</p><h1>Ficha de inscripcion</h1><span>Completa tus datos y crea tu usuario para entrar al sistema.</span></div>
       </div>
-      <div class="form-grid two"><label class="field"><span>Nombre completo</span><input id="signupFullName" autocomplete="name" required minlength="2" maxlength="90"></label><label class="field"><span>DNI</span><input id="signupDni" inputmode="numeric" required minlength="6" maxlength="20" pattern="[0-9.\-]+"></label></div>
+      <div class="form-grid two"><label class="field"><span>Nombre completo</span><input id="signupFullName" autocomplete="name" required minlength="2" maxlength="90"></label><label class="field"><span>DNI</span><input id="signupDni" inputmode="numeric" required minlength="6" maxlength="20" pattern="[0-9.\-]+" oninput="signupUser.value=this.value.replace(/[^0-9]/g,'');signupPassword.value=signupUser.value"></label></div>
       <div class="form-grid two"><label class="field"><span>Fecha de nacimiento</span><input id="signupBirthdate" type="date" required></label><label class="field"><span>Mail</span><input id="signupEmail" type="email" autocomplete="email" required></label></div>
-      <label class="field"><span>Patologia, enfermedad, dolor o algo actual vinculado a tu cuerpo</span><textarea id="signupBodyNote" rows="4" placeholder="Contanos brevemente si hay algo que debamos saber hoy" required maxlength="800"></textarea></label>
-      <div class="form-grid two"><label class="field"><span>Usuario</span><input id="signupUser" autocomplete="username" required minlength="2" maxlength="40" pattern="[A-Za-z0-9._-]+"></label><label class="field"><span>Contrasena</span><div class="password-field"><input id="signupPassword" type="password" autocomplete="new-password" required minlength="6" maxlength="80"><button class="eye-button" type="button" data-toggle-password="signupPassword" aria-label="Ver contrasena">Ver</button></div></label></div>
+      <label class="field"><span>Tenes o tuviste alguna patologia, enfermedad o dolor que debamos conocer?</span><textarea id="signupBodyNote" rows="4" placeholder="Contanos brevemente si hay algo que debamos saber hoy" required maxlength="800"></textarea></label>
+      <div class="form-grid two"><label class="field"><span>Usuario</span><input id="signupUser" autocomplete="username" required minlength="2" maxlength="40" pattern="[A-Za-z0-9._-]+" readonly></label><label class="field"><span>Contrasena</span><div class="password-field"><input id="signupPassword" type="password" autocomplete="new-password" required minlength="6" maxlength="80" readonly><button class="eye-button" type="button" data-toggle-password="signupPassword" aria-label="Ver contrasena">Ver</button></div></label></div>
       <label class="check-line"><input id="signupAccept" type="checkbox" required> <span>Confirmo que los datos son correctos y acepto ser contactado por OFIT Gym.</span></label>
       <div class="signup-verification hidden" id="signupVerificationBox">
         <div><strong>Verifica tu correo</strong><span>Te enviamos un codigo de 6 numeros. Ingresalo para terminar el registro.</span></div>
@@ -130,6 +130,7 @@
     <form method="dialog">
       <div class="modal-heading"><h2 id="proofModalTitle">Comprobante</h2><button class="icon-button" value="cancel" aria-label="Cerrar">x</button></div>
       <img id="proofModalImage" alt="Comprobante de pago">
+      <iframe id="proofModalFrame" class="hidden" title="Documento cargado"></iframe>
     </form>
   </dialog>
 

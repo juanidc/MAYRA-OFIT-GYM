@@ -106,6 +106,7 @@ body{overflow-x:hidden}.login-screen{min-height:100vh;display:grid;place-items:c
 .proof-modal{width:min(860px,calc(100vw - 28px))}
 .proof-modal form{display:grid;gap:14px}
 .proof-modal img{display:block;width:100%;max-height:72vh;object-fit:contain;border-radius:8px;background:#120a18;border:1px solid rgba(141,53,201,.16)}
+.proof-modal iframe{display:block;width:100%;height:min(72vh,720px);border:1px solid rgba(141,53,201,.16);border-radius:8px;background:#fff}
 @media (max-width:760px){.pay-now-button{width:100%;justify-self:stretch}.paid-pill{width:100%}.mini-class{grid-template-columns:58px minmax(0,1fr)}.reserve-mini{grid-column:1/-1;width:100%;min-width:0}.member-calendar .schedule-day{min-height:auto}}
 @media (max-width:760px){.payment-plan-card{align-items:flex-start;flex-direction:column}.payment-price{width:100%;justify-content:start}.pay-data-card{grid-template-columns:1fr}.payment-cta-row{display:grid}.payment-cta-row .primary-button,.payment-cta-row .ghost-button{width:100%}.proof-card{grid-template-columns:72px 1fr}.proof-thumb{width:72px;height:72px}.proof-card .payment-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr;gap:8px}.proof-modal img{max-height:68vh}}
 @media (max-width:760px){.upload-row{grid-template-columns:1fr}.upload-preview{min-height:180px}.upload-preview img{max-height:260px}}
@@ -433,3 +434,101 @@ body{background:var(--ofit-bg)}
 .view.active{animation:softIn .38s cubic-bezier(.2,.8,.2,1) both}
 .activity-row,.mini-class,.schedule-item,.payment-card{animation:softIn .42s ease both}
 @media (max-width:760px){.panel:hover,.metric:hover,.routine-card:hover,.payment-card:hover,.schedule-day:hover,.news-card:hover,.primary-button:hover,.ghost-button:hover{transform:none}.metric small b{width:auto}}
+.member-week-simple{grid-template-columns:minmax(220px,380px)!important}
+.conexion-portfolio{align-items:center;display:flex;gap:16px;justify-content:space-between}
+.conexion-portfolio .primary-button{text-align:center;text-decoration:none}
+.featured-portfolio{
+  position:relative;
+  overflow:hidden;
+  min-height:190px;
+  padding:26px;
+  border:1px solid rgba(210,143,255,.28);
+  border-radius:8px;
+  color:#fff;
+  text-decoration:none;
+  background:
+    radial-gradient(circle at 88% 10%,rgba(135,230,211,.34),transparent 24%),
+    radial-gradient(circle at 28% 96%,rgba(194,94,255,.38),transparent 30%),
+    linear-gradient(135deg,#120814 0%,#23102e 48%,#0f4f49 100%);
+  box-shadow:0 26px 90px rgba(45,12,59,.25);
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
+}
+.featured-portfolio:hover{
+  transform:translateY(-4px);
+  border-color:rgba(210,143,255,.55);
+  box-shadow:0 34px 120px rgba(45,12,59,.34);
+}
+.featured-portfolio:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,rgba(255,255,255,.08),transparent 34%),
+    repeating-linear-gradient(135deg,rgba(255,255,255,.06) 0 1px,transparent 1px 18px);
+  opacity:.55;
+}
+.portfolio-badge{
+  position:relative;
+  z-index:1;
+  display:grid;
+  place-items:center;
+  width:86px;
+  height:112px;
+  border-radius:8px;
+  background:linear-gradient(180deg,#fff,#efe5ff);
+  color:#6c22a8;
+  font-size:1.4rem;
+  font-weight:1000;
+  box-shadow:0 18px 45px rgba(0,0,0,.24);
+}
+.portfolio-badge:after{
+  content:"";
+  position:absolute;
+  right:0;
+  top:0;
+  border-top:22px solid rgba(110,34,168,.24);
+  border-left:22px solid transparent;
+}
+.portfolio-copy{
+  position:relative;
+  z-index:1;
+  flex:1;
+}
+.portfolio-copy .eyebrow{color:#89f2df}
+.portfolio-copy h2{
+  margin:6px 0 8px;
+  color:#fff;
+  font-size:clamp(2rem,4vw,4.2rem);
+  line-height:.95;
+}
+.portfolio-copy p{
+  max-width:720px;
+  color:rgba(255,255,255,.82);
+  line-height:1.55;
+}
+.portfolio-copy span{
+  display:inline-flex;
+  margin-top:14px;
+  padding:9px 13px;
+  border-radius:999px;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.22);
+  color:#fff;
+  font-weight:900;
+}
+.portfolio-action{
+  position:relative;
+  z-index:1;
+  padding:13px 18px;
+  border-radius:8px;
+  background:#fff;
+  color:#23102e;
+  font-weight:1000;
+  box-shadow:0 18px 50px rgba(0,0,0,.22);
+}
+.simple-conexion .conexion-spotlight{min-height:360px}
+.medical-upload-panel{max-width:820px}
+.medical-upload-panel input[type=file]{background:#fff;border:1px dashed rgba(138,62,184,.35);border-radius:8px;padding:14px;width:100%}
+.medical-upload-panel .primary-button{margin-top:8px;width:min(320px,100%)}
+.medical-history{display:grid;gap:10px;margin-top:18px}.medical-history h2{font-size:18px}.medical-row{align-items:center;background:rgba(255,255,255,.9);border:1px solid rgba(138,62,184,.18);border-radius:8px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;padding:14px;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}.medical-row:hover{border-color:rgba(138,62,184,.35);box-shadow:0 14px 34px rgba(45,20,61,.1);transform:translateY(-2px)}.medical-row small{color:var(--muted);display:block;margin-top:4px}.medical-row-main{display:grid;gap:4px;min-width:0}.medical-row-main strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.medical-member{font-size:1.02rem}.medical-actions{display:flex;align-items:center;gap:8px}.status-pill{display:inline-flex;align-items:center;width:max-content;min-height:26px;border-radius:999px;padding:0 10px;font-size:.8rem;font-weight:900}.status-pill.sent{background:#e7f4ec;color:#1f7a5b}.medical-inbox{margin-top:16px;max-width:none}.counter-pill{display:inline-flex;align-items:center;justify-content:center;min-width:34px;min-height:28px;border-radius:999px;background:#f0ddff;color:#7c2fb1;font-weight:900}
+@media (max-width:760px){.member-week-simple{grid-template-columns:1fr!important}.conexion-portfolio{align-items:stretch;flex-direction:column}.conexion-portfolio .primary-button{width:100%}.featured-portfolio{padding:20px;min-height:auto}.portfolio-badge{width:68px;height:88px}.portfolio-action{text-align:center}.simple-conexion .conexion-spotlight{min-height:auto}.medical-upload-panel .primary-button{width:100%}.medical-row{grid-template-columns:1fr}.medical-actions{display:grid;grid-template-columns:1fr;align-items:stretch}.medical-actions .ghost-button,.medical-actions .danger-button{width:100%}}

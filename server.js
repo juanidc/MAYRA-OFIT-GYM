@@ -22,6 +22,7 @@ const paymentAlias = "mayofitgym.mp";
 const paymentCvu = "0000003100048667750478";
 const paymentHolder = "Mayra Gutierrez";
 const paymentProofBucket = process.env.SUPABASE_PAYMENT_PROOF_BUCKET || "comprobantes-pago";
+const medicalCertificateBucket = process.env.SUPABASE_MEDICAL_CERTIFICATE_BUCKET || "aptos-medicos";
 const allowedOrigins = String(process.env.ALLOWED_ORIGINS || "")
   .split(",")
   .map(origin => origin.trim())
@@ -161,6 +162,7 @@ function defaultDb() {
     news: defaultNews(),
     accounting: defaultAccounting(),
     paymentProofs: [],
+    medicalCertificates: [],
     paymentLink: "https://www.mercadopago.com.ar/"
   };
 }
@@ -531,6 +533,19 @@ function cleanPaymentProof(item, includeImage = false) {
   return clean;
 }
 
+function cleanMedicalCertificate(item) {
+  return {
+    id: Number(item.id),
+    memberId: Number(item.memberId),
+    memberName: safeText(item.memberName, 90),
+    fileName: safeText(item.fileName, 160),
+    fileType: safeText(item.fileType, 80),
+    status: safeText(item.status || "cargado", 40),
+    createdAt: safeText(item.createdAt, 20),
+    url: `/api/medical-certificates/${Number(item.id)}/file`
+  };
+}
+
 function cleanAccountingEntry(item) {
   const type = item && item.type === "expense" ? "expense" : "income";
   const date = dateOnly(item && item.date) || new Date().toISOString().slice(0, 10);
@@ -760,6 +775,7 @@ async function dbWithSupabaseMembers() {
   }
   db.news = await loadNews(db);
   db.paymentProofs = await loadPaymentProofs(db);
+  db.medicalCertificates = await loadMedicalCertificates(db);
   return db;
 }
 
@@ -794,6 +810,59 @@ async function loadPaymentProofs(db) {
   } catch (error) {
     return Array.isArray(db.paymentProofs) ? db.paymentProofs : [];
   }
+}
+
+function aptoRowToMedicalCertificate(row) {
+  return {
+    id: Number(row.id),
+    memberId: Number(row.socio_id),
+    memberName: String(row.socio_nombre || "").trim(),
+    path: String(row.archivo_path || "").trim(),
+    fileName: String(row.archivo_nombre || "").trim(),
+    fileType: String(row.tipo_archivo || "").trim(),
+    status: String(row.estado || "cargado").trim(),
+    createdAt: String(row.created_at || "").slice(0, 10)
+  };
+}
+
+function medicalCertificateToAptoRow(item) {
+  return {
+    id: Number(item.id),
+    socio_id: Number(item.memberId),
+    socio_nombre: String(item.memberName || "").trim(),
+    archivo_path: String(item.path || "").trim(),
+    archivo_nombre: String(item.fileName || "").trim(),
+    tipo_archivo: String(item.fileType || "").trim(),
+    estado: String(item.status || "cargado").trim(),
+    updated_at: new Date().toISOString()
+  };
+}
+
+async function loadMedicalCertificates(db) {
+  try {
+    const rows = await supabaseRequest("aptos_medicos?select=*&order=created_at.desc", { serviceRole: true });
+    return Array.isArray(rows) ? rows.map(aptoRowToMedicalCertificate) : [];
+  } catch (error) {
+    return Array.isArray(db.medicalCertificates) ? db.medicalCertificates : [];
+  }
+}
+
+async function createMedicalCertificateInSupabase(item) {
+  const rows = await supabaseRequest("aptos_medicos", {
+    method: "POST",
+    headers: { Prefer: "return=representation" },
+    body: medicalCertificateToAptoRow(item),
+    serviceRole: true
+  });
+  return aptoRowToMedicalCertificate(Array.isArray(rows) ? rows[0] : rows);
+}
+
+async function deleteMedicalCertificateInSupabase(id) {
+  await supabaseRequest(`aptos_medicos?id=eq.${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: { Prefer: "return=minimal" },
+    serviceRole: true
+  });
 }
 
 async function createPaymentProofInSupabase(item) {
@@ -836,12 +905,44 @@ function dataImageToFile(image) {
   };
 }
 
+function dataUploadToFile(fileData) {
+  const value = String(fileData || "").trim();
+  const image = dataImageToFile(value);
+  if (image) return image;
+  const match = value.match(/^data:application\/pdf;base64,([a-z0-9+/=]+)$/i);
+  if (!match) return null;
+  return {
+    extension: "pdf",
+    contentType: "application/pdf",
+    buffer: Buffer.from(match[1], "base64")
+  };
+}
+
 async function uploadPaymentProofToStorage(item, image) {
   const file = dataImageToFile(image);
   if (!file) throw new Error("Comprobante invalido.");
   if (file.buffer.length > 5_000_000) throw new Error("La imagen es muy pesada. Proba con una captura menor a 5 MB.");
   const storagePath = `socios/${Number(item.memberId)}/${Number(item.id)}.${file.extension}`;
   await supabaseStorageRequest(`object/${paymentProofBucket}/${storagePath}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": file.contentType,
+      "Cache-Control": "3600",
+      "x-upsert": "true"
+    },
+    body: file.buffer,
+    responseType: "json",
+    serviceRole: true
+  });
+  return storagePath;
+}
+
+async function uploadMedicalCertificateToStorage(item, fileData) {
+  const file = dataUploadToFile(fileData);
+  if (!file) throw new Error("Apto medico invalido.");
+  if (file.buffer.length > 10_000_000) throw new Error("El archivo es muy pesado. Usa imagen o PDF menor a 10 MB.");
+  const storagePath = `socios/${Number(item.memberId)}/${Number(item.id)}.${file.extension}`;
+  await supabaseStorageRequest(`object/${medicalCertificateBucket}/${storagePath}`, {
     method: "POST",
     headers: {
       "Content-Type": file.contentType,
@@ -865,6 +966,22 @@ async function downloadPaymentProofFromStorage(pathValue) {
 
 function contentTypeFromProofPath(pathValue) {
   const value = String(pathValue || "").toLowerCase();
+  if (value.endsWith(".png")) return "image/png";
+  if (value.endsWith(".webp")) return "image/webp";
+  return "image/jpeg";
+}
+
+async function downloadMedicalCertificateFromStorage(pathValue) {
+  return supabaseStorageRequest(`object/${medicalCertificateBucket}/${encodeURI(String(pathValue || "").replace(/^\/+/, ""))}`, {
+    method: "GET",
+    responseType: "buffer",
+    serviceRole: true
+  });
+}
+
+function contentTypeFromMedicalPath(pathValue) {
+  const value = String(pathValue || "").toLowerCase();
+  if (value.endsWith(".pdf")) return "application/pdf";
   if (value.endsWith(".png")) return "image/png";
   if (value.endsWith(".webp")) return "image/webp";
   return "image/jpeg";
@@ -968,9 +1085,9 @@ function sessionPayload(session, db) {
   if (session.role === "member") {
     const member = db.members.find(m => m.id === session.memberId);
     if (!member) return { user: null, ...publicDb(db), csrfToken: session.csrfToken };
-    return { user: { role: "member", memberId: session.memberId }, member: cleanMember(member, true), paymentProofs: (db.paymentProofs || []).filter(p => Number(p.memberId) === Number(session.memberId)).map(p => cleanPaymentProof(p, false)), ...publicDb(db), csrfToken: session.csrfToken };
+    return { user: { role: "member", memberId: session.memberId }, member: cleanMember(member, true), paymentProofs: (db.paymentProofs || []).filter(p => Number(p.memberId) === Number(session.memberId)).map(p => cleanPaymentProof(p, false)), medicalCertificates: (db.medicalCertificates || []).filter(item => Number(item.memberId) === Number(session.memberId)).map(cleanMedicalCertificate), ...publicDb(db), csrfToken: session.csrfToken };
   }
-  return { user: { role: session.role, label: session.label }, members: db.members.map(m => cleanMember(m, true)), paymentProofs: (db.paymentProofs || []).map(p => cleanPaymentProof(p, true)), ...publicDb(db), csrfToken: session.csrfToken };
+  return { user: { role: session.role, label: session.label }, members: db.members.map(m => cleanMember(m, true)), paymentProofs: (db.paymentProofs || []).map(p => cleanPaymentProof(p, true)), medicalCertificates: (db.medicalCertificates || []).map(cleanMedicalCertificate), ...publicDb(db), csrfToken: session.csrfToken };
 }
 
 function securityHeaders(extra = {}) {
@@ -1095,9 +1212,8 @@ function readBody(req) {
     req.on("data", chunk => {
       if (settled) return;
       body += chunk;
-      if (body.length > 8_000_000) {
+      if (body.length > 18_000_000) {
         fail("Cuerpo de la peticion demasiado grande.");
-        req.destroy();
       }
     });
     req.on("end", () => {
@@ -1170,7 +1286,7 @@ const dummyPasswordHash = hashPassword(randomToken());
 // dos registros creados en el mismo milisegundo compartirian id y se confundiria la identidad.
 function uniqueId(db) {
   const used = new Set();
-  for (const group of [db.staff, db.members, db.classes, db.accounting]) {
+  for (const group of [db.staff, db.members, db.classes, db.accounting, db.paymentProofs, db.medicalCertificates]) {
     if (Array.isArray(group)) for (const item of group) used.add(Number(item.id));
   }
   let id = Date.now();
@@ -1643,6 +1759,73 @@ async function handleApi(req, res) {
     });
   }
 
+  if (req.method === "POST" && url.pathname === "/api/medical-certificates") {
+    const session = requireSession(req, res);
+    if (!session || !requireCsrf(req, res, session)) return;
+    let body;
+    try {
+      body = await readBody(req);
+    } catch (error) {
+      return send(res, 413, { error: error.message || "El archivo es demasiado grande." });
+    }
+    const memberId = session.role === "member" ? Number(session.memberId) : Number(body.memberId);
+    if (session.role === "member" && Number(body.memberId) && Number(body.memberId) !== Number(session.memberId)) {
+      return send(res, 403, { error: "No podes cargar aptos medicos de otro socio." });
+    }
+    const member = db.members.find(m => Number(m.id) === memberId);
+    if (!member) return send(res, 404, { error: "Socio no encontrado." });
+    const fileData = String(body.file || "").trim();
+    if (!/^data:(image\/(png|jpe?g|webp)|application\/pdf);base64,/i.test(fileData)) return send(res, 400, { error: "Subi una imagen o PDF valido del apto medico." });
+    if (fileData.length > 14_000_000) return send(res, 400, { error: "El archivo es muy pesado. Usa imagen o PDF menor a 10 MB." });
+    const parsedFile = dataUploadToFile(fileData);
+    if (!parsedFile) return send(res, 400, { error: "Archivo invalido." });
+    const item = {
+      id: uniqueId(db),
+      memberId: member.id,
+      memberName: member.name,
+      path: "",
+      fileName: text(body.fileName, 160) || `apto-medico-${member.id}.${parsedFile.extension}`,
+      fileType: parsedFile.contentType,
+      status: "cargado",
+      createdAt: new Date().toISOString().slice(0, 10)
+    };
+    try {
+      item.path = await uploadMedicalCertificateToStorage(item, fileData);
+      await createMedicalCertificateInSupabase(item);
+      db.medicalCertificates = await loadMedicalCertificates(db);
+    } catch (error) {
+      console.error("No se pudo guardar el apto medico:", error.message);
+      return send(res, 500, { error: "No se pudo guardar el apto medico: " + (error.message || "Error de Supabase.") });
+    }
+    const visibleCertificates = session.role === "member"
+      ? db.medicalCertificates.filter(item => Number(item.memberId) === Number(session.memberId))
+      : db.medicalCertificates;
+    return send(res, 201, {
+      ok: true,
+      medicalCertificates: visibleCertificates.map(cleanMedicalCertificate)
+    });
+  }
+
+  const medicalDeleteMatch = url.pathname.match(/^\/api\/medical-certificates\/(\d+)$/);
+  if (req.method === "DELETE" && medicalDeleteMatch) {
+    const session = requireRole(req, res, ["admin"]);
+    if (!session || !requireCsrf(req, res, session)) return;
+    const certificateId = Number(medicalDeleteMatch[1]);
+    const certificate = (db.medicalCertificates || []).find(item => Number(item.id) === certificateId);
+    if (!certificate) return send(res, 404, { error: "Apto medico no encontrado." });
+    try {
+      await deleteMedicalCertificateInSupabase(certificateId);
+      db.medicalCertificates = await loadMedicalCertificates(db);
+    } catch (error) {
+      db.medicalCertificates = (db.medicalCertificates || []).filter(item => Number(item.id) !== certificateId);
+      writeDb(db);
+    }
+    return send(res, 200, {
+      ok: true,
+      medicalCertificates: db.medicalCertificates.map(cleanMedicalCertificate)
+    });
+  }
+
   if (req.method === "GET" && url.pathname === "/api/accounting") {
     const session = requireRole(req, res, ["admin"]);
     if (!session) return;
@@ -1682,6 +1865,23 @@ async function handleApi(req, res) {
     db.accounting = (Array.isArray(db.accounting) ? db.accounting : []).filter(item => Number(item.id) !== id);
     writeDb(db);
     return send(res, 200, { entries: db.accounting.map(cleanAccountingEntry) });
+  }
+
+  const medicalFileMatch = url.pathname.match(/^\/api\/medical-certificates\/(\d+)\/file$/);
+  if (req.method === "GET" && medicalFileMatch) {
+    const session = requireSession(req, res);
+    if (!session) return;
+    const certificate = (db.medicalCertificates || []).find(item => Number(item.id) === Number(medicalFileMatch[1]));
+    if (!certificate) return send(res, 404, { error: "Apto medico no encontrado." });
+    if (session.role === "member" && Number(certificate.memberId) !== Number(session.memberId)) return send(res, 403, { error: "No autorizado." });
+    try {
+      const file = await downloadMedicalCertificateFromStorage(certificate.path);
+      res.writeHead(200, securityHeaders({ "Content-Type": contentTypeFromMedicalPath(certificate.path), "Cache-Control": "private, no-store" }));
+      res.end(file);
+    } catch (error) {
+      return send(res, 404, { error: "Archivo no encontrado en Storage." });
+    }
+    return;
   }
 
   const proofImageMatch = url.pathname.match(/^\/api\/payment-proofs\/(\d+)\/image$/);
