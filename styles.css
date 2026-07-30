@@ -67,15 +67,15 @@ body{overflow-x:hidden}.login-screen{min-height:100vh;display:grid;place-items:c
 .view.active{animation:softIn .32s ease both}.nav-item{display:flex;align-items:center;gap:10px}.nav-icon{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:8px;background:rgba(255,255,255,.08);font-size:1rem}.nav-item.active .nav-icon,.nav-item:hover .nav-icon{background:rgba(255,255,255,.16)}
 .panel:hover,.metric:hover,.routine-card:hover,.payment-card:hover,.schedule-day:hover{transform:translateY(-2px);box-shadow:0 22px 52px rgba(24,33,31,.12)}.panel,.metric,.routine-card,.payment-card,.schedule-day{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .member-home-v2{grid-template-columns:1.1fr .9fr}.member-week{position:relative;overflow:hidden;display:grid;gap:18px;grid-column:1/-1;padding:24px;border:0;background:linear-gradient(135deg,#151018 0%,#32203b 48%,#1f7a5b 135%);color:#fff}.member-week::before{content:"";position:absolute;right:-80px;top:-110px;width:320px;height:320px;border-radius:999px;background:radial-gradient(circle,rgba(217,179,255,.38),rgba(31,122,91,.16) 45%,transparent 70%);animation:glowShift 7s ease-in-out infinite}.member-week h2{position:relative;font-size:clamp(1.9rem,3vw,3rem);color:#fff}.member-week .eyebrow{color:#d9b3ff}.member-week .primary-button{position:relative;justify-self:start;min-width:150px;background:#fff;color:#1b1020;text-decoration:none}.week-grid{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.week-grid div{padding:14px;border:1px solid rgba(255,255,255,.14);border-radius:8px;background:rgba(255,255,255,.08);backdrop-filter:blur(8px)}.week-grid span{display:block;margin-bottom:6px;color:rgba(255,255,255,.7);font-size:.86rem}.week-grid strong{display:block;color:#fff;font-size:1.05rem}.ok-text{color:#b7f3ce!important}.due-text{color:#ffd1c4!important}.week-progress,.fitness-meter{height:12px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden}.week-progress span,.fitness-meter span,.progress-bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#1f7a5b,#b88cff,#ffffff);transform-origin:left center;animation:barFill .9s ease both}
-.member-agenda{grid-column:1/-1;display:grid;grid-template-columns:minmax(240px,.74fr) minmax(320px,1fr);gap:18px;padding:16px;border:0;background:linear-gradient(135deg,#fff,#f6f0fb)}.member-flyer-small .news-card{height:100%;min-height:0}.member-flyer-small .news-card img{aspect-ratio:4/5;max-height:360px;object-fit:cover}.member-flyer-small .news-card div{padding:12px}.next-classes{display:grid;align-content:start;gap:12px}.mini-class-list{display:grid;gap:10px}.mini-class{display:grid;grid-template-columns:72px 1fr auto;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.82);transition:transform .16s ease,background .16s ease}.mini-class:hover{transform:translateX(4px);background:#fff}.mini-class span{color:var(--accent);font-weight:900}.mini-class small{display:block;color:var(--muted)}.mini-class .ghost-button{min-height:34px}
+.member-agenda{grid-column:1/-1;display:grid;grid-template-columns:minmax(220px,360px) minmax(320px,1fr);gap:18px;align-items:start;padding:16px;border:0;background:linear-gradient(135deg,#fff,#f6f0fb)}.member-flyer-small .news-card{height:auto;min-height:0}.member-flyer-small .news-card img{aspect-ratio:9/16;max-height:620px;object-fit:cover;object-position:center top}.member-flyer-small .news-card div{padding:12px}.next-classes{display:grid;align-content:start;gap:12px}.mini-class-list{display:grid;gap:10px}.mini-class{display:grid;grid-template-columns:72px 1fr auto;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.82);transition:transform .16s ease,background .16s ease}.mini-class:hover{transform:translateX(4px);background:#fff}.mini-class span{color:var(--accent);font-weight:900}.mini-class small{display:block;color:var(--muted)}.mini-class .ghost-button{min-height:34px}
 .member-pay-card,.member-quick-progress{position:relative;overflow:hidden;border:0;background:linear-gradient(160deg,#ffffff 0%,#eef7f3 58%,#f2e8fb 100%)}.member-pay-card::before{content:"$";position:absolute;right:18px;top:10px;color:rgba(31,122,91,.1);font-size:5rem;font-weight:900}.member-quick-progress .panel-heading strong{font-size:2rem;color:var(--accent-dark)}.fitness-meter{margin:16px 0;background:#dfe7e2}
 .news-topline{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}.news-topline h2{font-size:1.35rem}.news-topline .primary-button{text-decoration:none}.news-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}.news-filters .is-selected{border-color:var(--accent);background:var(--soft);color:var(--accent-dark)}.news-grid-feed{grid-template-columns:repeat(4,minmax(0,1fr))}.news-grid-feed .news-card img{aspect-ratio:1/1.18}.news-day{display:inline-flex;margin-left:8px;color:var(--muted);font-size:.82rem;font-weight:800}.news-grid-feed .news-card h2{font-size:1rem}.news-grid-feed .news-card p{font-size:.92rem}
 .fitness-hero{background:linear-gradient(135deg,#fff,#f4fff8);border-left:0}.fitness-summary{background:linear-gradient(135deg,#fff,#f8f2ff)}.fitness-percent{font-size:2.2rem;color:var(--accent-dark)}.fitness-blocks{margin:4px 0 14px;color:var(--accent-dark);font-size:1.45rem;letter-spacing:1px;line-height:1;white-space:nowrap;animation:softIn .55s ease both}.attendance-chart div{animation:barRise .65s ease both}.attendance-chart div:nth-child(2){animation-delay:.08s}.attendance-chart div:nth-child(3){animation-delay:.16s}.attendance-chart div:nth-child(4){animation-delay:.24s}
 .profile-grid{display:grid;grid-template-columns:.75fr 1.25fr;gap:16px}.profile-card{display:grid;justify-items:start;align-content:start;gap:8px;background:linear-gradient(135deg,#151018,#32203b);color:#fff}.profile-card .muted{color:rgba(255,255,255,.72)}.profile-card .eyebrow{color:#d9b3ff}.profile-avatar{width:76px;height:76px;font-size:1.3rem;background:#1f7a5b;color:#fff}.profile-note{grid-column:1/-1}.profile-note p{margin:12px 0 0;color:var(--muted);line-height:1.6}
 @keyframes barFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}@keyframes barRise{from{height:0;opacity:.45}to{height:var(--h);opacity:1}}
 @media (max-width:1180px){.news-grid-feed{grid-template-columns:repeat(3,minmax(0,1fr))}.week-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:760px){.nav-item{justify-content:center;gap:6px}.nav-icon{width:22px;height:22px}.member-home-v2,.member-agenda,.profile-grid{grid-template-columns:1fr}.member-week{padding:20px}.member-week .primary-button{width:100%;justify-self:stretch}.week-grid{grid-template-columns:1fr 1fr}.member-flyer-small .news-card img{max-height:280px}.mini-class{grid-template-columns:62px 1fr}.mini-class .ghost-button{grid-column:1/-1;width:100%}.news-topline{align-items:stretch;flex-direction:column}.news-topline .primary-button{width:100%;text-align:center}.news-filters{display:grid;grid-template-columns:1fr 1fr}.news-grid-feed{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.news-grid-feed .news-card div{padding:10px}.news-grid-feed .news-card p{font-size:.84rem}.fitness-blocks{font-size:1.05rem;letter-spacing:0}.panel:hover,.metric:hover,.routine-card:hover,.payment-card:hover,.schedule-day:hover{transform:none}}
-@media (max-width:430px){.week-grid,.news-filters,.news-grid-feed{grid-template-columns:1fr}.member-flyer-small .news-card img{max-height:340px}}
+@media (max-width:760px){.nav-item{justify-content:center;gap:6px}.nav-icon{width:22px;height:22px}.member-home-v2,.member-agenda,.profile-grid{grid-template-columns:1fr}.member-week{padding:20px}.member-week .primary-button{width:100%;justify-self:stretch}.week-grid{grid-template-columns:1fr 1fr}.member-flyer-small .news-card img{max-height:none}.mini-class{grid-template-columns:62px 1fr}.mini-class .ghost-button{grid-column:1/-1;width:100%}.news-topline{align-items:stretch;flex-direction:column}.news-topline .primary-button{width:100%;text-align:center}.news-filters{display:grid;grid-template-columns:1fr 1fr}.news-grid-feed{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.news-grid-feed .news-card div{padding:10px}.news-grid-feed .news-card p{font-size:.84rem}.fitness-blocks{font-size:1.05rem;letter-spacing:0}.panel:hover,.metric:hover,.routine-card:hover,.payment-card:hover,.schedule-day:hover{transform:none}}
+@media (max-width:430px){.week-grid,.news-filters,.news-grid-feed{grid-template-columns:1fr}.member-flyer-small .news-card img{max-height:none}}
 .signup-verification{display:grid;grid-template-columns:1fr 180px auto;gap:12px;align-items:end;margin:16px 0;padding:14px;border:1px solid rgba(203,120,236,.36);border-radius:8px;background:rgba(255,255,255,.08)}.signup-verification strong,.signup-verification span{display:block}.signup-verification strong{color:#fff}.signup-verification span{margin-top:4px;color:rgba(255,255,255,.72)}.signup-verification .field{margin-top:0}.signup-verification input{text-align:center;font-size:1.15rem;font-weight:900;letter-spacing:4px}@media (max-width:760px){.signup-verification{grid-template-columns:1fr}.signup-verification .ghost-button{width:100%}}
 
 .pay-now-button{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;justify-self:start;min-height:48px;padding:0 18px;border-radius:999px;background:linear-gradient(135deg,#ffffff,#efe5f8);color:#1b1020;text-decoration:none;font-weight:900;box-shadow:0 14px 34px rgba(0,0,0,.22);overflow:hidden}.pay-now-button span{display:grid;place-items:center;width:28px;height:28px;border-radius:999px;background:#1f7a5b;color:#fff}.pay-now-button::after{content:"";position:absolute;inset:0 auto 0 -55%;width:42%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent);transform:skewX(-18deg);transition:left .5s ease}.pay-now-button:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(0,0,0,.28)}.pay-now-button:hover::after{left:120%}.paid-pill,.paid-message{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 14px;border-radius:999px;background:rgba(183,243,206,.16);color:#b7f3ce;font-weight:900}.paid-message{width:100%;background:#e7f4ec;color:#1f7a5b}.pay-card-button{text-decoration:none}
@@ -109,6 +109,7 @@ body{overflow-x:hidden}.login-screen{min-height:100vh;display:grid;place-items:c
 .proof-modal iframe{display:block;width:100%;height:min(72vh,720px);border:1px solid rgba(141,53,201,.16);border-radius:8px;background:#fff}
 @media (max-width:760px){.pay-now-button{width:100%;justify-self:stretch}.paid-pill{width:100%}.mini-class{grid-template-columns:58px minmax(0,1fr)}.reserve-mini{grid-column:1/-1;width:100%;min-width:0}.member-calendar .schedule-day{min-height:auto}}
 @media (max-width:760px){.payment-plan-card{align-items:flex-start;flex-direction:column}.payment-price{width:100%;justify-content:start}.pay-data-card{grid-template-columns:1fr}.payment-cta-row{display:grid}.payment-cta-row .primary-button,.payment-cta-row .ghost-button{width:100%}.proof-card{grid-template-columns:72px 1fr}.proof-thumb{width:72px;height:72px}.proof-card .payment-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr;gap:8px}.proof-modal img{max-height:68vh}}
+@media (max-width:760px){.payment-plan-options{grid-template-columns:1fr}.payment-plan-option{min-height:92px}}
 @media (max-width:760px){.upload-row{grid-template-columns:1fr}.upload-preview{min-height:180px}.upload-preview img{max-height:260px}}
 
 /* Correcciones de experiencia OFIT */
@@ -120,7 +121,7 @@ body{overflow-x:hidden}.login-screen{min-height:100vh;display:grid;place-items:c
 .dashboard-business-lower .progress-list{display:grid;grid-template-columns:1fr;gap:12px}
 .dashboard-business-lower .progress-list .fitness-meter{padding:0;border:0;background:#eadff3}
 .activity-row strong{display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap}
-.member-flyer-small .news-card img{object-fit:contain;background:#170b1d}
+.member-flyer-small .news-card img{object-fit:cover;object-position:center top;background:#170b1d}
 .member-flyer-small .news-card{overflow:hidden}
 .mini-class{grid-template-columns:72px minmax(0,1fr)}
 .mini-class .ghost-button,.reserve-mini{display:none!important}
@@ -131,6 +132,16 @@ body{overflow-x:hidden}.login-screen{min-height:100vh;display:grid;place-items:c
 .member-pay-page{display:grid;gap:16px}
 .member-payment-hero{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,#170b1d,#3a1a4c 58%,#1f7a5b 140%);color:#fff;border:0}
 .member-payment-hero h2{font-size:clamp(1.45rem,2.4vw,2.2rem);color:#fff}.member-payment-hero .muted{color:rgba(255,255,255,.75)}.member-payment-hero .eyebrow{color:#d49aff}
+.payment-plan-picker{display:grid;gap:14px;margin:14px 0 16px;padding:16px;border:1px solid rgba(141,53,201,.16);border-radius:12px;background:linear-gradient(135deg,#fff,#fbf7ff);box-shadow:0 14px 34px rgba(31,18,38,.06)}
+.payment-plan-title{display:block;margin-bottom:4px;font-weight:950;color:#24102d}
+.payment-plan-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.payment-plan-option{display:grid;gap:6px;min-height:112px;padding:14px;text-align:left;border:1px solid rgba(141,53,201,.22);border-radius:12px;background:#fff;color:var(--ink);box-shadow:0 10px 24px rgba(24,33,31,.06);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease}
+.payment-plan-option:hover{transform:translateY(-3px);box-shadow:0 18px 36px rgba(31,18,38,.12)}
+.payment-plan-option span{color:#6b7470;font-weight:850}
+.payment-plan-option strong{font-size:1.35rem;color:#24102d}
+.payment-plan-option small{color:var(--muted)}
+.payment-plan-option.is-selected{border-color:#8d35c9;background:linear-gradient(135deg,#27122f,#6b2aa0);color:#fff;box-shadow:0 16px 34px rgba(141,53,201,.24)}
+.payment-plan-option.is-selected span,.payment-plan-option.is-selected strong,.payment-plan-option.is-selected small{color:#fff}
 .member-only-pay .pay-data-card{grid-template-columns:repeat(3,minmax(0,1fr))}
 .payments-hero{background:linear-gradient(135deg,#fff,#faf7fd)}
 .payment-hero-actions{display:none}
@@ -271,6 +282,7 @@ body{overflow-x:hidden}.login-screen{min-height:100vh;display:grid;place-items:c
   font-size:clamp(3rem,7vw,6.6rem);
   line-height:.82;
   text-shadow:0 18px 46px rgba(0,0,0,.4);
+  overflow-wrap:anywhere;
 }
 #conexionPostural .conexion-brand-copy p{max-width:560px;color:rgba(255,255,255,.86);font-size:1.08rem;line-height:1.6}
 #conexionPostural .conexion-actions{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}
@@ -319,7 +331,7 @@ body{overflow-x:hidden}.login-screen{min-height:100vh;display:grid;place-items:c
 }
 @media (max-width:720px){
   #conexionPostural .conexion-spotlight{padding:18px}
-  #conexionPostural .conexion-brand-copy h2{font-size:3.3rem}
+  #conexionPostural .conexion-brand-copy h2{font-size:clamp(2.05rem,11vw,3.3rem);line-height:.95}
   #conexionPostural .conexion-preview img{height:420px}
   #conexionPostural .conexion-links{grid-template-columns:1fr}
 }
@@ -426,6 +438,9 @@ body{background:var(--ofit-bg)}
 .member-week::before{background:radial-gradient(circle,rgba(212,154,255,.44),rgba(31,122,91,.16) 46%,transparent 70%)}
 .week-grid div{background:rgba(255,255,255,.09);border-color:rgba(212,154,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
 .week-grid small{display:inline-flex;margin-top:8px;min-height:22px;align-items:center;padding:0 8px;border-radius:999px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.76);font-size:.76rem;font-weight:800}
+.today-question{margin:16px 0 0;color:#d49aff;font-size:clamp(1.55rem,3vw,2.55rem);font-weight:950;line-height:1.02;text-transform:uppercase;text-shadow:0 8px 28px rgba(212,154,255,.3)}
+.today-question-card{position:relative;z-index:1;display:grid;gap:8px;max-width:560px;margin-top:2px;padding:18px 20px;border:1px solid rgba(212,154,255,.28);border-radius:12px;background:linear-gradient(135deg,rgba(212,154,255,.16),rgba(255,255,255,.07));box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 18px 38px rgba(0,0,0,.14)}
+.today-question-card strong{color:#d49aff;font-size:clamp(1.7rem,3.4vw,3rem);font-weight:950;line-height:.96;text-transform:uppercase;text-shadow:0 8px 28px rgba(212,154,255,.3)}
 .member-agenda,.member-pay-card,.member-quick-progress,.fitness-summary,.news-admin,.member-calendar .schedule-day-head{background:linear-gradient(135deg,#fff 0%,#faf7fd 54%,#f2fbf6 100%)}
 .member-flyer-small .news-card,.news-grid-feed .news-card{background:#fff}
 .news-card .tag{background:#f1e8f7;color:#7225a6}.news-card:hover img{transform:scale(1.04);filter:saturate(1.12) contrast(1.04)}
@@ -532,3 +547,32 @@ body{background:var(--ofit-bg)}
 .medical-upload-panel .primary-button{margin-top:8px;width:min(320px,100%)}
 .medical-history{display:grid;gap:10px;margin-top:18px}.medical-history h2{font-size:18px}.medical-row{align-items:center;background:rgba(255,255,255,.9);border:1px solid rgba(138,62,184,.18);border-radius:8px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;padding:14px;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}.medical-row:hover{border-color:rgba(138,62,184,.35);box-shadow:0 14px 34px rgba(45,20,61,.1);transform:translateY(-2px)}.medical-row small{color:var(--muted);display:block;margin-top:4px}.medical-row-main{display:grid;gap:4px;min-width:0}.medical-row-main strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.medical-member{font-size:1.02rem}.medical-actions{display:flex;align-items:center;gap:8px}.status-pill{display:inline-flex;align-items:center;width:max-content;min-height:26px;border-radius:999px;padding:0 10px;font-size:.8rem;font-weight:900}.status-pill.sent{background:#e7f4ec;color:#1f7a5b}.medical-inbox{margin-top:16px;max-width:none}.counter-pill{display:inline-flex;align-items:center;justify-content:center;min-width:34px;min-height:28px;border-radius:999px;background:#f0ddff;color:#7c2fb1;font-weight:900}
 @media (max-width:760px){.member-week-simple{grid-template-columns:1fr!important}.conexion-portfolio{align-items:stretch;flex-direction:column}.conexion-portfolio .primary-button{width:100%}.featured-portfolio{padding:20px;min-height:auto}.portfolio-badge{width:68px;height:88px}.portfolio-action{text-align:center}.simple-conexion .conexion-spotlight{min-height:auto}.medical-upload-panel .primary-button{width:100%}.medical-row{grid-template-columns:1fr}.medical-actions{display:grid;grid-template-columns:1fr;align-items:stretch}.medical-actions .ghost-button,.medical-actions .danger-button{width:100%}}
+
+@media (max-width:760px){
+  .sidebar .nav-list{
+    display:flex;
+    grid-template-columns:none;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:4px;
+    scrollbar-width:none;
+  }
+  .sidebar .nav-list::-webkit-scrollbar{display:none}
+  .sidebar .nav-item{
+    flex:0 0 auto;
+    max-width:none;
+    min-width:max-content;
+    padding:9px 12px;
+    justify-content:flex-start;
+  }
+  .sidebar .nav-item span:last-child{
+    overflow:visible;
+    text-overflow:clip;
+  }
+  .news-grid-feed .news-card img{
+    aspect-ratio:9/16;
+    max-height:none;
+    object-fit:cover;
+    object-position:center top;
+  }
+}

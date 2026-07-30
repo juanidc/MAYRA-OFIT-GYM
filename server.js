@@ -1465,7 +1465,8 @@ async function handleApi(req, res) {
         dni: text(body.dni, 20),
         birthdate: text(body.birthdate, 20),
         email,
-        bodyNote: text(body.bodyNote, 800)
+        bodyNote: text(body.bodyNote, 800),
+        memberType: normalizePlan(body.memberType)
       }
     });
     await sendVerificationEmail(email, name, code);
@@ -1508,7 +1509,7 @@ async function handleApi(req, res) {
       email: pending.data.email,
       bodyNote: pending.data.bodyNote,
       activityIds: [],
-      memberType: "free-pass",
+      memberType: pending.data.memberType,
       attendance: 0,
       payment: "due",
       dueDate: "",
@@ -1595,9 +1596,15 @@ async function handleApi(req, res) {
 
   const memberMatch = url.pathname.match(/^\/api\/members\/(\d+)$/);
   if (req.method === "PATCH" && memberMatch) {
-    const session = requireRole(req, res, ["admin", "coach"]);
+    const session = requireRole(req, res, ["admin", "coach", "member"]);
     if (!session || !requireCsrf(req, res, session)) return;
     const body = await readBody(req);
+    const memberId = Number(memberMatch[1]);
+    if (session.role === "member") {
+      const keys = Object.keys(body || {});
+      if (Number(session.memberId) !== memberId) return send(res, 403, { error: "Solo podes cambiar tu propio abono." });
+      if (!keys.length || keys.some(key => key !== "memberType")) return send(res, 403, { error: "Solo podes cambiar tu tipo de abono." });
+    }
     // Si hay cambio de clave, validar y calcular el hash (async) ANTES de leer la DB,
     // para que la seccion critica de lectura->escritura no tenga ningun await.
     let newPasswordHash = null;
@@ -1607,7 +1614,7 @@ async function handleApi(req, res) {
       newPasswordHash = await hashPasswordAsync(body.password);
     }
     db = await dbWithSupabaseMembers();
-    const member = db.members.find(m => m.id === Number(memberMatch[1]));
+    const member = db.members.find(m => m.id === memberId);
     if (!member) return send(res, 404, { error: "Socio no encontrado." });
     if (body.name !== undefined) {
       const name = text(body.name, 90);
@@ -1643,7 +1650,7 @@ async function handleApi(req, res) {
         member.lastPayment = paymentReminderStamp();
       }
     }
-    if (body.memberType && session.role === "admin") member.memberType = normalizePlan(body.memberType);
+    if (body.memberType && (session.role === "admin" || session.role === "member")) member.memberType = normalizePlan(body.memberType);
     if (body.dueDate !== undefined && session.role === "admin") {
       if (body.dueDate && !validDate(body.dueDate)) return send(res, 400, { error: "Fecha de vencimiento invalida." });
       member.dueDate = dateOnly(body.dueDate);
@@ -1656,6 +1663,7 @@ async function handleApi(req, res) {
     if (typeof body.consistency === "number") member.consistency = Math.max(0, Math.min(100, body.consistency));
     const savedMember = await updateMemberInSupabase(member);
     db.members = await loadMembersFromSupabase();
+    if (session.role === "member") return send(res, 200, { member: cleanMember(savedMember, true), members: [cleanMember(savedMember, true)] });
     return send(res, 200, { member: cleanMember(savedMember, true), members: db.members.map(m => cleanMember(m, true)) });
   }
 
