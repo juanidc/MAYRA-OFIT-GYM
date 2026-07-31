@@ -549,6 +549,16 @@ body{background:var(--ofit-bg)}
 @media (max-width:760px){.member-week-simple{grid-template-columns:1fr!important}.conexion-portfolio{align-items:stretch;flex-direction:column}.conexion-portfolio .primary-button{width:100%}.featured-portfolio{padding:20px;min-height:auto}.portfolio-badge{width:68px;height:88px}.portfolio-action{text-align:center}.simple-conexion .conexion-spotlight{min-height:auto}.medical-upload-panel .primary-button{width:100%}.medical-row{grid-template-columns:1fr}.medical-actions{display:grid;grid-template-columns:1fr;align-items:stretch}.medical-actions .ghost-button,.medical-actions .danger-button{width:100%}}
 
 @media (max-width:760px){
+  html,body,.app-shell,.main,.view,.panel,#conexionPostural,.conexion-page,.simple-conexion{
+    max-width:100%;
+    min-width:0;
+  }
+  html,body,.app-shell{
+    overflow-x:hidden;
+  }
+  .main{
+    overflow-x:hidden;
+  }
   .sidebar .nav-list{
     display:flex;
     grid-template-columns:none;
@@ -573,6 +583,32 @@ body{background:var(--ofit-bg)}
     aspect-ratio:9/16;
     max-height:none;
     object-fit:cover;
+    object-position:center top;
+  }
+  #conexionPostural .conexion-spotlight,
+  #conexionPostural .featured-portfolio{
+    width:100%;
+    max-width:100%;
+  }
+  #conexionPostural .conexion-brand-copy,
+  #conexionPostural .portfolio-copy{
+    min-width:0;
+    max-width:100%;
+  }
+  #conexionPostural .conexion-brand-copy h2,
+  #conexionPostural .portfolio-copy h2{
+    overflow-wrap:anywhere;
+  }
+  #conexionPostural .conexion-preview{
+    width:100%;
+    max-width:100%;
+    border-radius:12px;
+  }
+  #conexionPostural .conexion-preview img{
+    width:100%;
+    height:auto;
+    max-height:360px;
+    object-fit:contain;
     object-position:center top;
   }
 }

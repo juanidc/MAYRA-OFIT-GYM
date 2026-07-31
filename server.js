@@ -44,7 +44,8 @@ const mime = {
   ".png": "image/png",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
-  ".svg": "image/svg+xml"
+  ".svg": "image/svg+xml",
+  ".pdf": "application/pdf"
 };
 
 function loadEnv() {
@@ -2157,7 +2158,14 @@ function serveStatic(req, res) {
     return res.end("No encontrado");
   }
   let finalPath = filePath;
-  if (!fs.existsSync(finalPath) || fs.statSync(finalPath).isDirectory()) finalPath = path.join(root, "index.html");
+  const requestedExt = path.extname(finalPath);
+  if (!fs.existsSync(finalPath) || fs.statSync(finalPath).isDirectory()) {
+    if (requestedExt) {
+      res.writeHead(404, securityHeaders({ "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" }));
+      return res.end("No encontrado");
+    }
+    finalPath = path.join(root, "index.html");
+  }
   const ext = path.extname(finalPath);
   const cacheControl = [".html", ".js", ".css"].includes(ext) ? "no-store" : "public, max-age=3600";
   res.writeHead(200, securityHeaders({ "Content-Type": mime[ext] || "application/octet-stream", "Cache-Control": cacheControl }));
