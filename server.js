@@ -349,14 +349,12 @@ function mailLayout(title, body) {
 }
 
 function paymentReminderHtml(member, db) {
-  const link = safeUrl(db.paymentLink, "https://www.mercadopago.com.ar/");
   const dueText = member.dueDate ? `vence el <strong>${safeText(member.dueDate)}</strong>` : "esta proxima a vencer";
   return mailLayout("Recordatorio de cuota", `<p>Hola <strong>${safeText(member.name)}</strong>, te escribimos desde OFIT para recordarte que tu abono ${dueText}.</p>
     <div style="margin:20px 0;padding:16px;border-radius:12px;background:#fbf7ff;border:1px solid #eadff0">
-      <strong style="display:block;margin-bottom:6px;color:#6b2ca0">Estado actual: pendiente</strong>
-      <span>Si queres regularizarla ahora, podes hacerlo desde el link oficial de pago o por transferencia.</span>
+      <strong style="display:block;margin-bottom:6px;color:#6b2ca0">Abono actual: ${safeText(planLabel(member.memberType))}</strong>
+      <span>Podes abonar por transferencia usando el alias o CVU que figuran en la seccion Pagos y luego subir el comprobante.</span>
     </div>
-    <p style="margin:22px 0"><a href="${link}" style="display:inline-block;background:#7b2fb8;color:#fff;text-decoration:none;padding:14px 22px;border-radius:10px;font-weight:bold">Pagar cuota</a></p>
     <p>Si ya abonaste, no hace falta que respondas este mail: administracion va a actualizar tu estado apenas revise el pago.</p>
     <p style="margin-top:22px;color:#6f6675">Gracias por ser parte de OFIT.</p>`);
 }
@@ -365,10 +363,24 @@ function paymentReminderStamp(date = new Date()) {
   return date.toISOString().slice(0, 10);
 }
 
+const paymentReminderDaysBefore = Number.parseInt(process.env.PAYMENT_REMINDER_DAYS_BEFORE || "2", 10);
+const paymentReminderWindowDays = Number.isFinite(paymentReminderDaysBefore) && paymentReminderDaysBefore >= 0 ? paymentReminderDaysBefore : 2;
+
+function isoDateFromUtcMs(ms) {
+  return new Date(ms).toISOString().slice(0, 10);
+}
+
+function isoDateToUtcMs(value) {
+  const textValue = String(value || "").slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(textValue)) return NaN;
+  const parts = textValue.split("-").map(Number);
+  return Date.UTC(parts[0], parts[1] - 1, parts[2]);
+}
+
 function daysSinceDate(value) {
   const textValue = String(value || "").slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(textValue)) return Infinity;
-  const then = new Date(`${textValue}T00:00:00.000Z`).getTime();
+  const then = isoDateToUtcMs(textValue);
   if (!Number.isFinite(then)) return Infinity;
   return Math.floor((Date.now() - then) / 86400000);
 }
@@ -376,20 +388,28 @@ function daysSinceDate(value) {
 function daysUntilDate(value) {
   const textValue = String(value || "").slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(textValue)) return Infinity;
-  const target = new Date(`${textValue}T00:00:00.000Z`).getTime();
+  const target = isoDateToUtcMs(textValue);
   if (!Number.isFinite(target)) return Infinity;
   const today = new Date();
   const start = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
   return Math.ceil((target - start) / 86400000);
 }
 
+function alreadyRemindedForCurrentDueWindow(member) {
+  const dueMs = isoDateToUtcMs(member.dueDate);
+  const lastMs = isoDateToUtcMs(member.lastPaymentReminder);
+  if (!Number.isFinite(dueMs) || !Number.isFinite(lastMs)) return false;
+  const windowStart = dueMs - paymentReminderWindowDays * 86400000;
+  return lastMs >= windowStart && lastMs <= dueMs;
+}
+
 function shouldSendPaymentReminder(member) {
   const daysUntilDue = daysUntilDate(member.dueDate);
-  return member.payment === "due"
-    && validEmail(member.email)
+  return validEmail(member.email)
     && Number.isFinite(daysUntilDue)
-    && daysUntilDue <= 3
-    && daysSinceDate(member.lastPaymentReminder) >= 7;
+    && daysUntilDue >= 0
+    && daysUntilDue <= paymentReminderWindowDays
+    && !alreadyRemindedForCurrentDueWindow(member);
 }
 
 async function sendAndTrackPaymentReminder(member, db) {
@@ -596,6 +616,26 @@ function addOneMonth(date = new Date()) {
   const next = new Date(date.getTime());
   next.setMonth(next.getMonth() + 1);
   return next.toISOString().slice(0, 10);
+}
+
+function proofPaymentDate(proof) {
+  return dateOnly(proof && (proof.createdAt || proof.receivedAt || proof.uploadedAt)) || paymentReminderStamp();
+}
+
+function dueDateFromPaymentDate(paymentDate) {
+  const ms = isoDateToUtcMs(paymentDate);
+  return Number.isFinite(ms) ? addOneMonth(new Date(ms)) : addOneMonth();
+}
+
+function isPendingPaymentProof(proof) {
+  return String(proof && proof.status || "Pendiente").toLowerCase().indexOf("aprob") === -1;
+}
+
+function latestPendingPaymentProofForMember(db, memberId) {
+  const proofs = Array.isArray(db.paymentProofs) ? db.paymentProofs : [];
+  return proofs
+    .filter(proof => Number(proof.memberId) === Number(memberId) && isPendingPaymentProof(proof))
+    .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")) || Number(b.id) - Number(a.id))[0] || null;
 }
 
 function clienteToMember(cliente) {
@@ -1647,8 +1687,19 @@ async function handleApi(req, res) {
       const wasDue = member.payment !== "paid";
       member.payment = body.payment === "paid" ? "paid" : "due";
       if (member.payment === "paid" && wasDue) {
-        member.dueDate = addOneMonth();
-        member.lastPayment = paymentReminderStamp();
+        const pendingProof = latestPendingPaymentProofForMember(db, member.id);
+        const paymentDate = proofPaymentDate(pendingProof);
+        member.dueDate = dueDateFromPaymentDate(paymentDate);
+        member.lastPayment = paymentDate;
+        if (pendingProof) {
+          pendingProof.status = "Aprobado";
+          try {
+            await updatePaymentProofInSupabase(pendingProof);
+          } catch (error) {
+            db.paymentProofs = db.paymentProofs.map(item => Number(item.id) === Number(pendingProof.id) ? pendingProof : item);
+            writeDb(db);
+          }
+        }
       }
     }
     if (body.memberType && (session.role === "admin" || session.role === "member")) member.memberType = normalizePlan(body.memberType);
@@ -1664,8 +1715,9 @@ async function handleApi(req, res) {
     if (typeof body.consistency === "number") member.consistency = Math.max(0, Math.min(100, body.consistency));
     const savedMember = await updateMemberInSupabase(member);
     db.members = await loadMembersFromSupabase();
+    db.paymentProofs = await loadPaymentProofs(db);
     if (session.role === "member") return send(res, 200, { member: cleanMember(savedMember, true), members: [cleanMember(savedMember, true)] });
-    return send(res, 200, { member: cleanMember(savedMember, true), members: db.members.map(m => cleanMember(m, true)) });
+    return send(res, 200, { member: cleanMember(savedMember, true), members: db.members.map(m => cleanMember(m, true)), paymentProofs: db.paymentProofs.map(p => cleanPaymentProof(p, true)) });
   }
 
   if (req.method === "DELETE" && memberMatch) {
@@ -1694,7 +1746,8 @@ async function handleApi(req, res) {
     if (!session || !requireCsrf(req, res, session)) return;
     const member = db.members.find(m => m.id === Number(paymentReminderMatch[1]));
     if (!member) return send(res, 404, { error: "Socio no encontrado." });
-    if (member.payment === "paid") return send(res, 400, { error: "El socio ya figura al dia." });
+    if (!validEmail(member.email)) return send(res, 400, { error: "El socio no tiene un mail valido." });
+    if (!validDate(member.dueDate)) return send(res, 400, { error: "El socio no tiene fecha de vencimiento valida." });
     try {
       await sendAndTrackPaymentReminder(member, db);
       db.members = await loadMembersFromSupabase();
@@ -1947,8 +2000,9 @@ async function handleApi(req, res) {
     if (!member) return send(res, 404, { error: "Socio no encontrado." });
     proof.status = "Aprobado";
     member.payment = "paid";
-    member.lastPayment = paymentReminderStamp();
-    member.dueDate = addOneMonth();
+    const paymentDate = proofPaymentDate(proof);
+    member.lastPayment = paymentDate;
+    member.dueDate = dueDateFromPaymentDate(paymentDate);
     try {
       await updatePaymentProofInSupabase(proof);
     } catch (error) {
@@ -2247,4 +2301,5 @@ if (paymentReminderTimer.unref) paymentReminderTimer.unref();
 server.listen(port, () => {
   console.log(`OFIT Gym funcionando en http://127.0.0.1:${port}`);
   securityAudit();
+  setTimeout(runAutomaticPaymentReminders, 15 * 1000);
 });
