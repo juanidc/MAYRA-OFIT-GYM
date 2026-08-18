@@ -615,7 +615,8 @@ body{background:var(--ofit-bg)}
   }
   #conexionPostural .conexion-brand-copy h2,
   #conexionPostural .portfolio-copy h2{
-    overflow-wrap:anywhere;
+    overflow-wrap:normal;
+    word-break:normal;
   }
   #conexionPostural .conexion-preview{
     width:100%;
@@ -628,6 +629,38 @@ body{background:var(--ofit-bg)}
     max-height:360px;
     object-fit:contain;
     object-position:center top;
+  }
+}
+
+/* Conexion Postural: avoid broken Instagram title on smaller notebooks/zoomed browsers */
+#conexionPostural .conexion-brand-copy h2{
+  font-size:clamp(2.35rem,5.1vw,5.45rem);
+  line-height:.9;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+
+#conexionPostural .conexion-brand-copy h2 span{
+  display:block;
+}
+
+@media (max-width:1200px){
+  #conexionPostural .simple-conexion .conexion-spotlight{
+    grid-template-columns:1fr;
+    min-height:auto;
+  }
+
+  #conexionPostural .simple-conexion .conexion-preview{
+    max-width:780px;
+  }
+}
+
+@media (max-width:760px){
+  #conexionPostural .conexion-brand-copy h2{
+    font-size:clamp(2.05rem,11vw,3.35rem);
+    line-height:.94;
+    overflow-wrap:normal;
+    word-break:normal;
   }
 }
 
