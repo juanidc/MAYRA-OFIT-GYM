@@ -1630,8 +1630,14 @@ async function handleApi(req, res) {
       lastPayment: body.payment === "paid" ? paymentReminderStamp() : "",
       lastPaymentReminder: ""
     };
-    const savedMember = await createMemberInSupabase(member);
-    db.members = await loadMembersFromSupabase();
+    let savedMember = member;
+    if (supabaseConfigured()) {
+      savedMember = await createMemberInSupabase(member);
+      db.members = await loadMembersFromSupabase();
+    } else {
+      db.members.push(member);
+      writeDb(db);
+    }
     return send(res, 201, { member: cleanMember(savedMember, true), members: db.members.map(m => cleanMember(m, true)) });
   }
 
@@ -2003,15 +2009,16 @@ async function handleApi(req, res) {
     const paymentDate = proofPaymentDate(proof);
     member.lastPayment = paymentDate;
     member.dueDate = dueDateFromPaymentDate(paymentDate);
-    try {
+    if (supabaseConfigured()) {
+      await updateMemberInSupabase(member);
       await updatePaymentProofInSupabase(proof);
-    } catch (error) {
+      db.members = await loadMembersFromSupabase();
+      db.paymentProofs = await loadPaymentProofs(db);
+    } else {
       db.paymentProofs = db.paymentProofs.map(item => Number(item.id) === Number(proof.id) ? proof : item);
+      db.members = db.members.map(item => Number(item.id) === Number(member.id) ? member : item);
       writeDb(db);
     }
-    await updateMemberInSupabase(member);
-    db.members = await loadMembersFromSupabase();
-    db.paymentProofs = await loadPaymentProofs(db);
     return send(res, 200, {
       ok: true,
       members: db.members.map(m => cleanMember(m, true)),
