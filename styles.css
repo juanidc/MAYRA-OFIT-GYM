@@ -612,10 +612,10 @@ body{background:var(--ofit-bg)}
     white-space:nowrap;
   }
   .news-grid-feed .news-card img{
-    aspect-ratio:9/16;
+    aspect-ratio:4/5;
     max-height:none;
-    object-fit:cover;
-    object-position:center top;
+    object-fit:contain;
+    object-position:center center;
   }
   #conexionPostural .conexion-spotlight,
   #conexionPostural .featured-portfolio{
@@ -691,5 +691,54 @@ body{background:var(--ofit-bg)}
     width:20px;
     height:20px;
     font-size:.72rem;
+  }
+}
+
+/* Novedades: flyers completos, sin banner gigante ni recortes */
+.news-grid-feed{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:16px;
+  align-items:start;
+}
+
+.news-grid-feed .news-card{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+
+.news-grid-feed .news-card img,
+.member-flyer-small .news-card img{
+  width:100%;
+  aspect-ratio:4/5;
+  height:auto;
+  max-height:none;
+  object-fit:contain;
+  object-position:center center;
+  background:#180d1f;
+}
+
+.news-grid-feed .news-card.featured{
+  display:flex;
+  grid-template-columns:none;
+}
+
+.news-grid-feed .news-card.featured img{
+  min-height:0;
+  height:auto;
+  aspect-ratio:4/5;
+}
+
+.class-link-row{
+  width:100%;
+  border:1px solid rgba(141,53,201,.12);
+  text-align:left;
+  cursor:pointer;
+}
+
+@media (max-width:760px){
+  .news-grid-feed{
+    grid-template-columns:1fr;
   }
 }
